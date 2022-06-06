@@ -6,14 +6,14 @@ import HandTrackingModule as htm
 prevTime = 0
 currTime = 0
 capture = cv2.VideoCapture(0)
-detector = htm.handDetector()
+detector = htm.HandDetector()
 
 while True:
     success, img = capture.read()
     img = detector.findHands(img)
-    landmarkList = detector.findPosition(img)
-    if len(landmarkList) != 0:
-        print(landmarkList[4])
+    landmark_list = detector.findPosition(img)
+    if len(landmark_list) != 0:
+        print(landmark_list[4])
 
     # Get FPS
     currTime = time.time()

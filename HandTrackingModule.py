@@ -2,23 +2,23 @@ import cv2
 import mediapipe as mp
 import time
 
-class handDetector():
-    def __init__(self, mode=False, maxHands=2, complexity=1, detectionConf=0.5, trackingConf=0.5):
+class HandDetector():
+    def __init__(self, mode=False, maxHands=2, complexity=1, detection_conf=0.5, tracking_conf=0.5):
         self.mode = mode
         self.maxHands = maxHands
         self.complexity = complexity
-        self.detectionConf = detectionConf
-        self.trackingConf = trackingConf
+        self.detection_conf = detection_conf
+        self.tracking_conf = tracking_conf
 
         self.mpHands = mp.solutions.hands
         self.hands = self.mpHands.Hands(
-            self.mode, self.maxHands, self.complexity, self.detectionConf, self.trackingConf
+            self.mode, self.maxHands, self.complexity, self.detection_conf, self.tracking_conf
         )
         self.mpDraw = mp.solutions.drawing_utils
 
     def findHands(self, img, draw=True):
-        imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        self.results = self.hands.process(imgRGB)
+        img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        self.results = self.hands.process(img_rgb)
         # print(results.multi_hand_landmarks)
 
         if self.results.multi_hand_landmarks:
@@ -29,7 +29,7 @@ class handDetector():
         return img
 
     def findPosition(self, img, handNo=0, draw=True):
-        landmarkList = []
+        landmark_list = []
         if self.results.multi_hand_landmarks:
             myHand = self.results.multi_hand_landmarks[handNo]
 
@@ -40,24 +40,24 @@ class handDetector():
                 # Find the center's position
                 cx, cy = int(landmark.x * w), int(landmark.y * h)
                 # print(handId, cx, cy)
-                landmarkList.append([handId, cx, cy])
+                landmark_list.append([handId, cx, cy])
                 if draw:
                     cv2.circle(img, (cx, cy), 7, (255, 0, 0), cv2.FILLED)
 
-        return landmarkList
+        return landmark_list
 
 def main():
     prevTime = 0
     currTime = 0
     capture = cv2.VideoCapture(0)
-    detector = handDetector()
+    detector = HandDetector()
 
     while True:
         success, img = capture.read()
         img = detector.findHands(img)
-        landmarkList = detector.findPosition(img)
-        if len(landmarkList) != 0:
-            print(landmarkList[4])
+        landmark_list = detector.findPosition(img)
+        if len(landmark_list) != 0:
+            print(landmark_list[4])
 
         # Get FPS
         currTime = time.time()
